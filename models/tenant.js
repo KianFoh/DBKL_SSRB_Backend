@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     image: {
-      type: DataTypes.BLOB('long'), // Storing image as BLOB
+      type: DataTypes.STRING, // Storing image path as STRING
       allowNull: false
     },
     status: {
