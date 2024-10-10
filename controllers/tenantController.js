@@ -81,15 +81,6 @@ const verifyTenant = async (req, res) => {
 
       console.log('API Response:', apiResponse.data);
 
-      // Delete the temporary image file
-      fs.unlink(image.path, (err) => {
-        if (err) {
-          console.error('Error deleting the file:', err);
-        } else {
-          console.log('Temporary file deleted successfully');
-        }
-      });
-
       // Send a success response
       res.status(200).json({ message: 'Verification complete', isWithinThreshold, distance, apiResponse: apiResponse.data });
     } catch (error) {
