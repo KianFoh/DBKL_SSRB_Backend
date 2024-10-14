@@ -12,7 +12,7 @@ const app = express();
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-//*** Security configurations ***//
+// *** Security configurations ***//
 
 // Enable CORS with custom options
 app.use(cors(corsOptions));
@@ -20,7 +20,17 @@ app.use(cors(corsOptions));
 // Apply the origin check middleware to all routes
 app.use(checkOrigin);
 
-//*** API Routes ***//
+// Error handling for CORS
+app.use((err, req, res, next) => {
+  if (err.message === 'Not allowed by CORS') {
+    res.status(403).json({ message: 'Not allowed by CORS' });
+  } else {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+// *** API Routes ***//
 
 // Route to create a new tenant
 app.post('/tenant', upload.single('Selfie'), createTenant);

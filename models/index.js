@@ -1,5 +1,6 @@
 const { Sequelize } = require('sequelize');
 const mysql = require('mysql2/promise');
+const { port } = require('../config');
 
 // Load environment variables from .env file
 require('dotenv').config();
@@ -9,6 +10,7 @@ const dbConfig = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306,
 };
 
 const db = {};
@@ -20,6 +22,7 @@ async function initializeDatabase() {
       host: dbConfig.host,
       user: dbConfig.user,
       password: dbConfig.password,
+      port: dbConfig.port,
     });
 
     // Check if the database exists

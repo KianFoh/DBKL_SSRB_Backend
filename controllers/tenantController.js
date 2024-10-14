@@ -4,6 +4,7 @@ const { compressImage, deleteFile } = require('../utils/imageUtils');
 const { callExternalApi } = require('../utils/apiUtils');
 const { imageQuality, locationThreshold } = require('../config');
 const fs = require('fs'); // Ensure fs is imported
+const { log } = require('console');
 
 // Controller function to create a new tenant
 const createTenant = async (req, res) => {
@@ -49,7 +50,7 @@ const verifyTenant = async (req, res) => {
 
     const distance = getDistance(tenant.location.coordinates, [longitude, latitude]);
     const isWithinThreshold = distance <= locationThreshold;
-    console.log('Distance:', isWithinThreshold);
+    console.log('Distance:', distance, locationThreshold, isWithinThreshold);
 
     const compressedImagePath = await compressImage(image.path, imageQuality);
     fs.renameSync(compressedImagePath, image.path);
@@ -57,15 +58,14 @@ const verifyTenant = async (req, res) => {
     try {
       const apiResponse = await callExternalApi(tenant.image, image.path);
       const selfieResult = apiResponse.data.verified;
-
+      console.log('Selfie Result:', selfieResult, apiResponse.data.threshold, apiResponse.data.distance);
+      console.log('isWithinThreshold:', isWithinThreshold);
       tenant.status = !selfieResult || !isWithinThreshold ? 'Yellow' : 'Green';
       await tenant.save();
 
       console.log('API Response:', selfieResult);
       res.status(200).json({ 
-        message: `Verification completed. Tenant Name: ${tenant.name}, IC: ${tenant.IC}, Status: ${tenant.status}`, 
-        status: tenant.status,
-        apiResponse: apiResponse.data
+        message: `Verification completed. Tenant Name: ${tenant.name}, IC: ${tenant.IC}, Status: ${tenant.status}, Location Match: ${isWithinThreshold}, Selfie Match: ${selfieResult}`
       });
     } catch (error) {
       handleApiError(error, tenant, res);

@@ -6,5 +6,5 @@ module.exports = {
   apiUrl: process.env.API_URL || "http://localhost:5001",
   port: process.env.PORT || 3000,
   host: process.env.HOST || '0.0.0.0',
-  allowedOrigin: process.env.ALLOWED_ORIGIN || 'http://localhost:3000'
+  allowedOrigins: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000']
 };

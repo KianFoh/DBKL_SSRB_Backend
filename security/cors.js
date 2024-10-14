@@ -1,17 +1,22 @@
 const cors = require('cors');
-const { allowedOrigin } = require('../config');
+const { allowedOrigins } = require('../config');
 
-// CORS configuration to allow only a specific domain
+// CORS configuration to allow specific domains
 const corsOptions = {
-  origin: allowedOrigin,
+  origin: (origin, callback) => {
+    if (origin && allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: '*',
 };
 
 // Middleware to check the origin of the request
 const checkOrigin = (req, res, next) => {
-  const allowedOrigins = [allowedOrigin];
   const origin = req.headers.origin;
-  if (!origin || allowedOrigins.includes(origin)) {
+  if (origin && allowedOrigins.includes(origin)) {
     next();
   } else {
     res.status(403).json({ message: 'Forbidden: Access is denied' });
