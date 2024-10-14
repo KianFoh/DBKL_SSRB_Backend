@@ -17,13 +17,10 @@ app.use(express.json());
 // Enable CORS with custom options
 app.use(cors(corsOptions));
 
-// Apply the origin check middleware to all routes
-app.use(checkOrigin);
-
 // Error handling for CORS
 app.use((err, req, res, next) => {
-  if (err.message === 'Not allowed by CORS') {
-    res.status(403).json({ message: 'Not allowed by CORS' });
+  if (err.message === 'Forbidden Access') {
+    res.status(403).json({ message: err.message });
   } else {
     res.status(500).json({ message: 'Internal Server Error' });
   }
