@@ -2,7 +2,7 @@
 const express = require('express');
 const db = require('./models');
 const { upload, tempUpload } = require('./middleware/upload');
-const { createTenant, verifyTenant } = require('./controllers/tenantController');
+const { createTenant, verifyTenant, getTenantData } = require('./controllers/tenantController'); 
 const { port, host } = require('./config');
 const { cors, corsOptions, checkOrigin } = require('./security/cors');
 
@@ -34,6 +34,9 @@ app.post('/tenant', upload.single('Selfie'), createTenant);
 
 // Route to verify a tenant with image and location
 app.post('/tenant/verify', tempUpload.single('Selfie'), verifyTenant);
+
+// Route to get tenant data
+app.get('/tenant', getTenantData);
 
 // Initialize the database and start the server
 (async () => {

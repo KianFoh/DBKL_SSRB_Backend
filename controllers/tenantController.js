@@ -77,6 +77,30 @@ const verifyTenant = async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+// Function to get tentant data
+const getTenantData = async (req, res) => {
+  try {
+    const { IC, Location, status } = req.body;
+    const query = {};
+    if (IC) query.IC = IC;
+    if (Location) {
+      const [latitude, longitude] = Location.split(',').map(Number);
+      query.location = { type: 'Point', coordinates: [longitude, latitude] };
+    }
+    if (status) query.status = status;
+
+    const tenants = await db.models.Tenant.findAll({
+      where: query,
+      attributes: { exclude: ['createdAt', 'updatedAt'] }
+    });
+
+    res.status(200).json(tenants);
+
+  } catch (error) {
+    console.error('Error processing request:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 const handleApiError = (error, tenant, res) => {
   const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Bad Request';
@@ -96,4 +120,4 @@ const handleApiError = (error, tenant, res) => {
   }
 };
 
-module.exports = { createTenant, verifyTenant };
+module.exports = { createTenant, verifyTenant, getTenantData };
