@@ -5,9 +5,13 @@ const { upload, tempUpload } = require('./middleware/upload');
 const { createTenant, verifyTenant, getTenantData } = require('./controllers/tenantController'); 
 const { port, host } = require('./config');
 const { cors, corsOptions, checkOrigin } = require('./security/cors');
+const path = require('path');
 
 // Initialize the Express application
 const app = express();
+
+// Serve static files from the 'Image/tenants/Images' directory
+app.use('/images', express.static(path.join(__dirname, 'Image/tenants/Images')));
 
 // Middleware to parse JSON bodies
 app.use(express.json());

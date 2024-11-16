@@ -5,7 +5,7 @@ const { callExternalApi } = require('../utils/apiUtils');
 const { imageQuality, locationThreshold } = require('../config');
 const fs = require('fs'); // Ensure fs is imported
 const { log } = require('console');
-
+const path = require('path');
 // Controller function to create a new tenant
 const createTenant = async (req, res) => {
   try {
@@ -94,7 +94,14 @@ const getTenantData = async (req, res) => {
       attributes: { exclude: ['createdAt', 'updatedAt'] }
     });
 
-    res.status(200).json(tenants);
+    const updatedTenants = tenants.map(tenant => {
+      return {
+        ...tenant.toJSON(),
+        image: `${req.protocol}://${req.get('host')}/images/${path.basename(tenant.image)}`
+      };
+    });
+
+    res.status(200).json(updatedTenants);
 
   } catch (error) {
     console.error('Error processing request:', error);
